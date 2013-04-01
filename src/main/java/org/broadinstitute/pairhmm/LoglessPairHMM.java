@@ -105,12 +105,27 @@ public class LoglessPairHMM extends PairHMM {
         final int readXMetricLength = readBases.length + 2;
         final int hapYMetricLength = haplotypeBases.length + 2;
 
+        // Loop through the matrices in diagonals starting running lower left -> upper right
+        // TODO- DRAFT only. Has not been tested. Not initializing the row or column indices correctly (hapStartIndex)
+        final int maxDiagonals = readXMetricLength + hapYMetricLength - 1 ;
+        for (int diagonal = 0; diagonal < maxDiagonals; diagonal++){
+            int startRow = diagonal < readXMetricLength ? diagonal : readXMetricLength - 1;
+            int skipEndRows = diagonal < hapYMetricLength ? 2 : diagonal - hapYMetricLength + 1;
+            for (int i = startRow; i >= skipEndRows; --i) {
+                int j = diagonal - i;
+                updateCell(i, j, prior[i][j], transition[i]);
+            }
+        }
+
+        /****
+         * Original rowXcolumn loop.
         for (int i = 2; i < readXMetricLength; i++) {
             // +1 here is because hapStartIndex is 0-based, but our matrices are 1 based
             for (int j = hapStartIndex+1; j < hapYMetricLength; j++) {
                 updateCell(i, j, prior[i][j], transition[i]);
             }
         }
+        *****/
 
         // final probability is the log10 sum of the last element in the Match and Insertion state arrays
         // this way we ignore all paths that ended in deletions! (huge)
