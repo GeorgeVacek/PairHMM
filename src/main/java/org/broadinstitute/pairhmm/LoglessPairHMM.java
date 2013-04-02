@@ -105,34 +105,30 @@ public class LoglessPairHMM extends PairHMM {
         final int readXMetricLength = readBases.length + 2;
         final int hapYMetricLength = haplotypeBases.length + 2;
 
-        // Loop through the matrices in diagonals running lower left -> upper right
-        // This worked, but I was manually setting the start row
-        //     and skipping the first col with a condition. More efficient method below.
-        /*
-        final int maxDiagonals = readXMetricLength + hapYMetricLength - 1 ;
-        for (int diagonal = 0; diagonal < maxDiagonals; diagonal++){
-            int startRow = diagonal < readXMetricLength ? diagonal : readXMetricLength - 1;
-            int skipEndRows = diagonal < hapYMetricLength ? 2 : diagonal - hapYMetricLength + 1;
-            for (int i = startRow; i >= skipEndRows; --i) {
-                int j = diagonal - i;
-                if (j > 0){
-                    //updateCell(i, j, prior[i][j], transition[i]);
-                }
-            }
-        }*/
+        // Account for offset starts when setting values in our M, D, I matrices
+        // TODO- colOffset = haplotypeStartIndex+1 ??
+        final int rowOffset = 2;
+        final int colOffset = 1;
 
-        final int maxDiagonals = (readXMetricLength-2) + (hapYMetricLength-1) - 1 ;
+        // loop control variables for filling in HMM matrices diagonally
+        // looping through a hypothetical maxRow x maxCol matrix starting at (0,0)
+        // Adjusting i + j using offsets
+        final int maxRow = readXMetricLength - rowOffset;
+        final int maxCol = hapYMetricLength - colOffset;
+        final int maxDiagonals = (maxRow) + (maxCol) - 1 ;
+
+        // fill in HMM matrices in diagonal rows running bottom-left -> top right
         for (int diagonal = 0; diagonal < maxDiagonals; diagonal++){
-            int startRow = diagonal < readXMetricLength-2 ? diagonal : readXMetricLength - 3;
-            int skipEndRows = diagonal < hapYMetricLength-1 ? 0 : diagonal - hapYMetricLength+2;
-            for (int index = startRow; index >= skipEndRows; --index) {
-                int i = index+2;
-                int j = (diagonal - index)+1;
+            int startRow = diagonal < maxRow ? diagonal : maxRow - 1;
+            int skipAtEnd = diagonal < maxCol ? 0 : diagonal - hapYMetricLength+rowOffset;
+            for (int index = startRow; index >= skipAtEnd; --index) {
+                int i = index+rowOffset;
+                int j = (diagonal - index)+colOffset;
                 updateCell(i, j, prior[i][j], transition[i]);
             }
         }
 
-        // Original rowXcolumn loop.
+        // Original rowXcolumn loop filling HMM matrices.
         /*
         for (int i = 2; i < readXMetricLength; i++) {
             // +1 here is because hapStartIndex is 0-based, but our matrices are 1 based
