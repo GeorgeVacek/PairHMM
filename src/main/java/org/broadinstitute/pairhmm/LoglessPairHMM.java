@@ -122,7 +122,6 @@ public class LoglessPairHMM extends PairHMM {
         for (int diagonal = 0; diagonal < maxDiagonals; diagonal++){
             int startRow = diagonal < maxRow ? diagonal : maxRow - 1;
             int skipAtEnd = diagonal < maxCol ? 0 : diagonal - maxCol + 1;
-            System.out.println(skipAtEnd);
             for (int index = startRow; index >= skipAtEnd; --index) {
                 int i = index+rowOffset;
                 int j = (diagonal - index)+colOffset;
