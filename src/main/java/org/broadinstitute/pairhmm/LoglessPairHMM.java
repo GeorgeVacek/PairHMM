@@ -108,7 +108,7 @@ public class LoglessPairHMM extends PairHMM {
         // Account for offset starts when setting values in our M, D, I matrices
         // TODO- colOffset = haplotypeStartIndex+1 ??
         final int rowOffset = 2;
-        final int colOffset = 1;
+        final int colOffset = hapStartIndex+1;
 
         // loop control variables for filling in HMM matrices diagonally
         // looping through a hypothetical maxRow x maxCol matrix starting at (0,0)
@@ -117,10 +117,12 @@ public class LoglessPairHMM extends PairHMM {
         final int maxCol = hapYMetricLength - colOffset;
         final int maxDiagonals = (maxRow) + (maxCol) - 1 ;
 
+
         // fill in HMM matrices in diagonal rows running bottom-left -> top right
         for (int diagonal = 0; diagonal < maxDiagonals; diagonal++){
             int startRow = diagonal < maxRow ? diagonal : maxRow - 1;
-            int skipAtEnd = diagonal < maxCol ? 0 : diagonal - hapYMetricLength+rowOffset;
+            int skipAtEnd = diagonal < maxCol ? 0 : diagonal - maxCol + 1;
+            System.out.println(skipAtEnd);
             for (int index = startRow; index >= skipAtEnd; --index) {
                 int i = index+rowOffset;
                 int j = (diagonal - index)+colOffset;
