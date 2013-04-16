@@ -130,8 +130,7 @@ public class LoglessPairHMM extends PairHMM {
         }
 
         // Original rowXcolumn loop filling HMM matrices.
-        /*
-        for (int i = 2; i < readXMetricLength; i++) {
+        /*for (int i = 2; i < readXMetricLength; i++) {
             // +1 here is because hapStartIndex is 0-based, but our matrices are 1 based
             for (int j = hapStartIndex+1; j < hapYMetricLength; j++) {
                 updateCell(i, j, prior[i][j], transition[i]);

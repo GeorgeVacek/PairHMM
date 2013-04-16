@@ -20,8 +20,8 @@ public class Evaluate {
 
     public final List<PairHMM> pairHMM = new ArrayList<PairHMM>(20);
 
-    private static final int X_METRIC_LENGTH = 10000;
-    private static final int Y_METRIC_LENGTH = 10000;
+    private static final int X_METRIC_LENGTH = 1000;
+    private static final int Y_METRIC_LENGTH = 1000;
 
     private static Logger logger = Logger.getLogger("Main");
 
